@@ -55,3 +55,5 @@ RUN flutter config --no-analytics \
     && flutter precache \
     && flutter doctor \
     && flutter config --enable-web
+
+COPY --chown=vscode:vscode ./container_config /home/vscode/container_config
