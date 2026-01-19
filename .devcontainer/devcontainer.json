@@ -40,31 +40,26 @@
 	// 5555: Android Emulator ADB Port (TCP)
 	"forwardPorts": [8080, 5554, 5555],
 
-	// Labels for the forwarded ports in the VS Code 'Ports' view
-	"portsAttributes": {
-		"8080": {
-			"label": "Flutter Web App",
-			"onAutoForward": "openBrowser"
-		},
-		"5554": {
-			"label": "Emulator Console"
-		},
-		"5555": {
-			"label": "ADB Connection"
-		}
-	},
+    "portsAttributes": {
+        "8080": {
+            "label": "Flutter Web App",
+            "onAutoForward": "openBrowser"
+        },
+        "5555": {
+            "label": "ADB Connection"
+        }
+    },
 
-	// Grants the container access to USB devices (required for ADB debugging with physical devices)
-	// Satisfies Requirement 4: Running on ADB (USB Passthrough)
-	"runArgs": [
-		"--privileged",
-		"-v",
-		"/dev/bus/usb:/dev/bus/usb"
-	],
+    // CRITICAL: This tells the container "Don't look for USBs inside Linux. 
+    // Talk to the Windows ADB Server on port 5037."
+    "containerEnv": {
+        "ADB_SERVER_SOCKET": "tcp:host.docker.internal:5037"
+    },
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// Satisfies Requirement 2: Git Versioning (Fixes 'dubious ownership' errors)
-	"postCreateCommand": "/home/vscode/container_config/start.sh",
+    // Cleaned up: Removed the Linux-specific USB mounting args
+    "runArgs": [],
+
+    "postCreateCommand": "/home/vscode/container_config/start.sh",
 
 	// Connect as the non-root user defined in the Dockerfile
 	"remoteUser": "vscode"
