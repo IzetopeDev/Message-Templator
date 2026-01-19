@@ -36,8 +36,23 @@
 
 	// Forward ports for development
 	// 8080: Flutter Web
-	// 5554: Android Emulator Console
-	"forwardPorts": [8080, 5554],
+	// 5554: Android Emulator Console (Telnet)
+	// 5555: Android Emulator ADB Port (TCP)
+	"forwardPorts": [8080, 5554, 5555],
+
+	// Labels for the forwarded ports in the VS Code 'Ports' view
+	"portsAttributes": {
+		"8080": {
+			"label": "Flutter Web App",
+			"onAutoForward": "openBrowser"
+		},
+		"5554": {
+			"label": "Emulator Console"
+		},
+		"5555": {
+			"label": "ADB Connection"
+		}
+	},
 
 	// Grants the container access to USB devices (required for ADB debugging with physical devices)
 	// Satisfies Requirement 4: Running on ADB (USB Passthrough)
