@@ -93,6 +93,7 @@ class _ResultTextState extends State<ResultText> {
       }
     }
 
+    debugPrint("generated text: '$result' \n--last line--");
     return result;
   }
 
@@ -106,26 +107,30 @@ class _ResultTextState extends State<ResultText> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Container(
-              width: double.infinity,
-              color: Colors.grey[300],
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                _generatedText.isEmpty
-                    ? "Click 'Generate Text' to fill in values"
-                    : _generatedText,
+      child: Container(
+        width: double.infinity,
+        color: Colors.grey[300],
+        padding: const EdgeInsets.all(8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  _generatedText.isEmpty
+                      ? "Click 'Generate Text' to fill in values"
+                      : _generatedText,
+                ),
               ),
-            ),
+              ElevatedButton(
+                onPressed: _generateText,
+                child: Text("Generate Text"),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: _generateText,
-            child: Text("Generate Text"),
-          ),
-        ],
+        ),
       ),
     );
   }
