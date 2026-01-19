@@ -1,5 +1,0 @@
-
-# TODO: change the extension of this file to .sh!
-cd /../workspaces/Message-Templator/templator
-git config --global user.email "issaclaikoiyit@gmail.com"
-git config --global user.name "IzeD"

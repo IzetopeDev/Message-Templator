@@ -16,6 +16,10 @@ else
     echo "  ./adb -a nodaemon server"
 fi
 
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
 # 2. Navigate to project
 # Ensure this matches your mount path (/workspaces/<folder>)
 cd /workspaces/Message-Templator/templator || echo "Warning: Could not find project folder"
@@ -28,7 +32,11 @@ git config --global --add safe.directory '*'
 flutter doctor
 flutter pub get
 
-# 5. Run next script (Execute only if it exists)
-if [ -f "/home/vscode/container_config/dev-config.sh" ]; then
-    /home/vscode/container_config/dev-config.sh
+# 3. Apply Git Configuration
+if [ -n "$GIT_EMAIL" ] && [ -n "$GIT_NAME" ]; then
+    git config --global user.email "$GIT_EMAIL"
+    git config --global user.name "$GIT_NAME"
+    echo " Git Configured: $GIT_NAME <$GIT_EMAIL>"
+else
+    echo " Skipping Git Config: GIT_EMAIL or GIT_NAME not found in .env"
 fi
