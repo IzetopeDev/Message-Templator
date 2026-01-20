@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:templator/classes/field.dart';
 import 'package:templator/classes/template.dart';
@@ -14,13 +15,13 @@ class ApplyTemplatePage extends StatefulWidget {
 
 class _ApplyTemplatePageState extends State<ApplyTemplatePage> {
   final template = Template(
-    templateText: '''
-Location: {{location}}, 
+    name: "Individual Movement",
+    templateText: '''Location: {{location}}, 
 Est Time Out: {{timeOut}}, 
 Est Time In: {{timeIn}}, 
+
 Rank/Name: 
-{{names}}
-    ''',
+{{names}}''',
     fields: [
       LabelledTextField(keyword: "location"),
       LabelledTextField(keyword: "timeOut", label: "Est Time Out"),
@@ -52,7 +53,7 @@ Rank/Name:
       body: Center(
         child: ListView(
           children: [
-            TextTemplateCard(fields: template.createWidgetsByFieldType()),
+            TextTemplateCard([template]),
             ResultText(template: template),
             SizedBox(height: 200),
           ],
@@ -99,7 +100,15 @@ class _ResultTextState extends State<ResultText> {
 
   void _generateText() {
     setState(() {
-      _generatedText = _fillTemplate(widget.template);
+      String templateResult;
+      try {
+        templateResult = _fillTemplate(widget.template);
+      } catch (e) {
+        log("null value in fields!:", level: 900, error: e, name: "WARN");
+        templateResult = "please submit your fields.";
+      }
+
+      _generatedText = templateResult; 
     });
   }
 
