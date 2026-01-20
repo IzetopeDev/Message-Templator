@@ -27,7 +27,7 @@ class LabelledTextField extends Field<String> {
     return LabelledTextFieldWidget(
       label ?? keyword,
       isLast: isLast,
-      onSubmitted: assignFieldValue,
+      onChanged: assignFieldValue,
     );
   }
 }

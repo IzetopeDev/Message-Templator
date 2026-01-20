@@ -4,12 +4,12 @@ class LabelledTextFieldWidget extends StatelessWidget {
   const LabelledTextFieldWidget(
     this.optionName, { //named params
     super.key,
-    this.onSubmitted,
+    this.onChanged,
     this.isLast = false,
   });
 
   final String optionName;
-  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
   final bool isLast;
 
   @override
@@ -26,7 +26,7 @@ class LabelledTextFieldWidget extends StatelessWidget {
               textInputAction: isLast
                   ? TextInputAction.done
                   : TextInputAction.next,
-              onSubmitted: onSubmitted,
+              onChanged: onChanged,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: optionName,
