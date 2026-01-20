@@ -77,7 +77,20 @@ class _ResultTextState extends State<ResultText> {
 
   String _fillTemplate(Template template) {
     String result = template.templateText;
+
+    log(
+      "applying field values to template (${template.name})",
+      name: "INFO",
+      level: 800
+    );
+    
     for (var field in template.fields) {
+      log(
+        "reading Field: ${field.keyword}, value: ${field.value}",
+        name: "DEBUG (-v)",
+        level: 300
+      );
+
       if (field.value == null) {
         throw ArgumentError.notNull("Field: ${field.keyword}");
       }
@@ -94,20 +107,23 @@ class _ResultTextState extends State<ResultText> {
       }
     }
 
-    debugPrint("generated text: '$result' \n--last line--");
+    log("applied values to template, result:\n $result", name: "INFO", level: 800);
     return result;
   }
 
   void _generateText() {
-    setState(() {
-      String templateResult;
-      try {
-        templateResult = _fillTemplate(widget.template);
-      } catch (e) {
-        log("null value in fields!:", level: 900, error: e, name: "WARN");
-        templateResult = "please submit your fields.";
-      }
+    String templateResult;
 
+    log("user pressed generate text", name: "INFO", level: 800);
+
+    try {
+      templateResult = _fillTemplate(widget.template);
+    } catch (e) {
+      log("null value in fields!:", level: 900, error: e, name: "WARN");
+      templateResult = "please submit your fields.";
+    }
+
+    setState(() {
       _generatedText = templateResult; 
     });
   }

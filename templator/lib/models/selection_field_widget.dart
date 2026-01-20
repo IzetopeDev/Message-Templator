@@ -20,6 +20,8 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
   List<String> selectedOptions = [];
 
   void _onNameSelected(bool? value, String option) {
+
+
     setState(() {
       if (value == true) {
         selectedOptions.add(option);
@@ -51,7 +53,6 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
   @override
   Widget build(BuildContext context) {
     List<String> sortedList = _sortBySelected(widget.listOptions);
-    debugPrint("widget.label :>> ${widget.label}");
 
     return Column(
       children: [

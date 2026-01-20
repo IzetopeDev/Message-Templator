@@ -39,10 +39,10 @@ class _TextTemplateCardState extends State<TextTemplateCard> {
   List<Widget> _getFields() {
 
     if (_selectedTemplate == null && widget.defaultTemplate != null) {
-      _fields = widget.defaultTemplate!.createWidgetsByFieldType();
+      _fields = widget.defaultTemplate!.buildWidget();
     }
     
-    _fields = _selectedTemplate?.createWidgetsByFieldType() 
+    _fields = _selectedTemplate?.buildWidget() 
       ?? [Text("Select your template to generate fields!")];   
 
     log(
