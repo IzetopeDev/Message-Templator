@@ -11,8 +11,8 @@ class Template {
   }) {
     log(
       "new Template instance ($name)",
-      name: "INFO",
-      level: 800
+      name: "DEBUG",
+      level: 500
     );
 
     log(
