@@ -29,6 +29,6 @@ class Template {
   final String name;
 
   List<Widget> buildWidget() {
-    return fields.map((field) => field.buildWidget()).toList();
+    return fields.map((field) => field.buildWidget(name)).toList();
   }
 }

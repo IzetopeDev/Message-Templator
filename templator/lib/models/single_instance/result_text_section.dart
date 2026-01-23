@@ -8,9 +8,8 @@ import 'package:templator/classes/field.dart';
 import '../../classes/template.dart';
 
 class ResultText extends StatefulWidget {
-  final Template template;
-
   const ResultText({super.key, required this.template});
+  final Template? template;
 
   @override
   State<ResultText> createState() => _ResultTextState();
@@ -19,8 +18,10 @@ class ResultText extends StatefulWidget {
 class _ResultTextState extends State<ResultText> {
   String _generatedText = "";
 
-  String _fillTemplate(Template template) {
-    String result = template.templateText;
+  String _fillTemplate(Template? template) {
+    ArgumentError.checkNotNull(template, "no template chosen!");
+
+    String result = template!.templateText;
 
     log(
       "applying field values to template (${template.name})",
@@ -35,9 +36,7 @@ class _ResultTextState extends State<ResultText> {
         level: 300
       );
 
-      if (field.value == null) {
-        throw ArgumentError.notNull("Field: ${field.keyword}");
-      }
+      ArgumentError.checkNotNull(field.value, "Field: ${field.keyword}");
 
       switch (field) {
         case LabelledTextField f:
@@ -63,7 +62,7 @@ class _ResultTextState extends State<ResultText> {
     try {
       templateResult = _fillTemplate(widget.template);
     } catch (e) {
-      log("null value in fields!:", level: 900, error: e, name: "WARN");
+      log("null value!", level: 900, error: e, name: "WARN");
       templateResult = "please submit your fields.";
     }
 
