@@ -60,15 +60,15 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: sortedList
-              .map(
-                (option) => CheckboxListTile(
-                  key: ValueKey(option),
-                  title: Text(option),
-                  value: selectedOptions.contains(option),
-                  onChanged: (bool? value) => _onNameSelected(value, option),
-                ),
-              )
-              .toList(),
+            .map(
+              (option) => CheckboxListTile(
+                key: ValueKey(option),
+                title: Text(option),
+                value: selectedOptions.contains(option),
+                onChanged: (bool? value) => _onNameSelected(value, option),
+              ),
+            )
+            .toList(),
         ),
       ],
     );

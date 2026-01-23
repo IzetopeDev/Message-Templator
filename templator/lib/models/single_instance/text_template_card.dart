@@ -9,11 +9,13 @@ class TextTemplateCard extends StatefulWidget {
     {
       super.key,
       this.defaultTemplate,
+      this.onTemplateSelected,
     });
 
   //TODO: get template info by provider!
   final List<Template> templates;
   final Template? defaultTemplate;
+  final void Function(Template? template)? onTemplateSelected;
 
   @override
   State<TextTemplateCard> createState() => _TextTemplateCardState();
@@ -34,6 +36,8 @@ class _TextTemplateCardState extends State<TextTemplateCard> {
       _selectedTemplate = template;
       _fields = _getFields();
     });
+    
+    widget.onTemplateSelected?.call(template);
   }
 
   List<Widget> _getFields() {

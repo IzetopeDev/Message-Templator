@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:templator/pages/apply_template_page.dart';
+import 'package:templator/views/main_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Templator',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.indigo)),
-      home: ApplyTemplatePage(title: 'Text Templator'),
+      home: MainView(title: 'Text Templator'),
     );
   }
 }

@@ -28,7 +28,7 @@ abstract class Field<T> {
     });
   }
 
-  Widget buildWidget();
+  Widget buildWidget(String parentName);
 }
 
 class LabelledTextField extends Field<String> {
@@ -49,9 +49,10 @@ class LabelledTextField extends Field<String> {
   bool isLast;
 
   @override
-  Widget buildWidget() {
+  Widget buildWidget(parentName) {
     return LabelledTextFieldWidget(
       label ?? keyword,
+      key: ValueKey("$parentName:{{$keyword}}"),
       isLast: isLast,
       onChanged: assignFieldValue,
     );
@@ -78,9 +79,10 @@ class SelectionField extends Field<List<String>> {
   List<String> options;
 
   @override
-  Widget buildWidget() {
+  Widget buildWidget(String parentName) {
     return SelectionFieldWidget(
       options,
+      key: ValueKey("$parentName:{{$keyword}}"),
       label: label,
       onSelected: assignFieldValue,
     );
@@ -102,6 +104,7 @@ class DropdownField<T> extends Field<T> {
       level: 500
     );
     log(
+      // ignore: prefer_adjacent_string_concatenation
       "templates: ${options.toList()}}" +
       "this.defaultTemplate",
       name: "DEBUG (-v)",
@@ -114,9 +117,10 @@ class DropdownField<T> extends Field<T> {
   String? hintText;
   
   @override
-  Widget buildWidget() {
+  Widget buildWidget(String parentName) {
     return SideLabelledDropdownMenuWidget(
       options, 
+      key: ValueKey("$parentName:{{$keyword}}"),
       sideLabel: label ?? keyword,
       defaultOption: defaultOption,
       hintText: hintText,
