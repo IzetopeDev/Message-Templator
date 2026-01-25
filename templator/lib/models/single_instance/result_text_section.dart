@@ -54,6 +54,32 @@ class _ResultTextState extends ConsumerState<ResultText> {
     });
 
   }
+  
+  void _onPressedGenerate() {
+    log(
+      "User pressed generate text button",
+      name: "INFO",
+      level: 800,
+    );
+
+    try {_generateText();}
+    catch (e) {
+      log("Exception caught:", name: "WARN", level: 900, error: e);
+      if (e is NullValueException) {
+        switch (e.context) {
+          case "template":
+            setState(() =>_generatedText = "please select a template!");
+            break;
+
+          case "field":
+            setState(() =>_generatedText = "please fill in all the fields!");
+            break;
+        }
+      } else if (e is UnpredictedException) {
+        log(e.message, name:"ERROR", level: 1200);
+      }
+    }  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,30 +102,7 @@ class _ResultTextState extends ConsumerState<ResultText> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      log(
-                        "User pressed generate text button",
-                        name: "INFO",
-                        level: 800,
-                      );
-                      try {_generateText();}
-                      catch (e) {
-                        log("Exception caught:", name: "WARN", level: 900, error: e);
-                        if (e is NullValueException) {
-                          switch (e.context) {
-                            case "template":
-                              setState(() =>_generatedText = "please select a template!");
-                              break;
-
-                            case "field":
-                              setState(() =>_generatedText = "please fill in all the fields!");
-                              break;
-                          }
-                        } else if (e is UnpredictedException) {
-                          log(e.message, name:"ERROR", level: 1200);
-                        }
-                      }  
-                    },
+                    onPressed: _onPressedGenerate,
                     child: Text("Generate Text"),
                   ),
                   IconButton(
@@ -128,4 +131,5 @@ class _ResultTextState extends ConsumerState<ResultText> {
       ),
     );
   }
+
 }

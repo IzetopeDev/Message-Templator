@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:templator/types/field_config.dart';
 
-class SideLabelledDropdownMenuWidget<T> extends StatelessWidget {
-  const SideLabelledDropdownMenuWidget(this.config, {super.key,});
+class DropdownFieldWidget<T> extends StatelessWidget {
+  const DropdownFieldWidget(this.config, {super.key,});
   
   final DropdownFieldConfig<T> config;
 

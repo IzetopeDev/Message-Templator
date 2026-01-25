@@ -2,7 +2,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:templator/models/labelled_text_field_widget.dart';
 import 'package:templator/models/selection_field_widget.dart';
-import 'package:templator/models/side_labelled_dropdown_widget.dart';
+import 'package:templator/models/dropdown_field_widget.dart';
+
+enum FieldType {
+  labelledTextField("Text Field"),
+  selectionField("Selection Field"),
+  dropdownField("Dropdown Field");
+  
+  final String name;
+
+  const FieldType(this.name);
+}
 
 abstract class FieldConfig<T> {
   final String keyword;
@@ -123,7 +133,7 @@ class DropdownFieldConfig<T> extends FieldConfig<T> {
     if (callback != null) onSelected = callback;
     if (initialValue != null) super.initialValue = initialValue;
 
-    return SideLabelledDropdownMenuWidget<T>(
+    return DropdownFieldWidget<T>(
       this, 
       key: ValueKey("$parentName:{{$keyword}}"),
     );
