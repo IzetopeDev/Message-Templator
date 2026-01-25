@@ -1,71 +1,44 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:templator/classes/template.dart';
-import 'package:templator/models/side_labelled_dropdown_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:templator/providers/template_form_notifier.dart';
+import 'package:templator/providers/template_manager_notifier.dart';
+import 'package:templator/states/template_form_state.dart';
+import 'package:templator/types/field_config.dart';
 
-class TextTemplateCard extends StatefulWidget {
-  const TextTemplateCard(
-    this.templates, 
-    {
-      super.key,
-      this.defaultTemplate,
-      this.onTemplateSelected,
-    });
+class TextTemplateCard extends ConsumerWidget {
+  const TextTemplateCard({super.key});
 
-  //TODO: get template info by provider!
-  final List<Template> templates;
-  final Template? defaultTemplate;
-  final void Function(Template? template)? onTemplateSelected;
+  void _onSelected(String? templateName, TemplateFormNotifier notifier) {
+    try {
+      ArgumentError.checkNotNull(templateName);
+      log(
+        "User selected template: ${templateName!}",
+        name: "USER",
+        level: 800
+      );
 
-  @override
-  State<TextTemplateCard> createState() => _TextTemplateCardState();
-}
+      notifier.selectTemplate(templateName);
 
-class _TextTemplateCardState extends State<TextTemplateCard> {
-  Template? _selectedTemplate;
-  late List<Widget> _fields = _getFields();
-
-  void _onTemplateSelected(Template? template) {
-    log(
-      "user selected template: ${template?.name ?? "no template"}", 
-      name: "INFO",  
-      level: 800,
-    );
-
-    setState(() {
-      _selectedTemplate = template;
-      _fields = _getFields();
-    });
-    
-    widget.onTemplateSelected?.call(template);
-  }
-
-  List<Widget> _getFields() {
-
-    if (_selectedTemplate == null && widget.defaultTemplate != null) {
-      _fields = widget.defaultTemplate!.buildWidget();
+    } catch (e) {
+      log(
+        "User selected null template!",
+        error: e,
+        name: "WARNING",
+        level: 900,
+        stackTrace: StackTrace.current
+      );
     }
-    
-    _fields = _selectedTemplate?.buildWidget() 
-      ?? [Text("Select your template to generate fields!")];   
-
-    log(
-      "fields to generate ${_fields.length}", 
-      name: "DEBUG",
-      level: 500
-    );
-
-    log(
-      "fields to generate: $_fields",
-      name: "DEBUG (-v)",
-      level: 300
-    );
-
-    return _fields;
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    TemplateFormState formState = ref.watch(templateFormProvider);
+    TemplateFormNotifier formNotifier = ref.watch(templateFormProvider.notifier);
+    List<String>? templateNames = ref.watch(templateManagerProvider)
+      .builders?.keys.toList(); 
+  
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -73,14 +46,18 @@ class _TextTemplateCardState extends State<TextTemplateCard> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SideLabelledDropdownMenuWidget(
-                widget.templates, 
-                sideLabel: "Template:",
+              DropdownFieldConfig<String>(
+                options: templateNames ?? ["No Options Passed"], 
+                label: "Template:",
+                keyword: "TemplateSelector",
                 hintText: "Your Template",
-                defaultOption: widget.defaultTemplate,
-                onSelected: _onTemplateSelected),
+                initialValue: formState.activeTemplate?.name,
+                onSelected: (value) => _onSelected(value, formNotifier),
+              ).buildWidget("TemplateSelector"),
               Column(
-                children: _fields,
+                children: formState
+                  .activeTemplate?.buildWidgets(formNotifier, formState.fieldValues) 
+                  ?? [Text("Select your template to generate fields!")],
               ),
             ],
           ),

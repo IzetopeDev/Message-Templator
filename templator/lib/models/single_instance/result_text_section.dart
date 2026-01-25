@@ -3,72 +3,56 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:templator/classes/field.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:templator/providers/template_form_notifier.dart';
+import 'package:templator/states/template_form_state.dart';
+import 'package:templator/types/Exceptions.dart';
+import 'package:templator/types/template_builder.dart';
 
-import '../../classes/template.dart';
 
-class ResultText extends StatefulWidget {
-  const ResultText({super.key, required this.template});
-  final Template? template;
+class ResultText extends ConsumerStatefulWidget {
+
+  const ResultText({super.key});
 
   @override
-  State<ResultText> createState() => _ResultTextState();
+  ConsumerState createState() => _ResultTextState();
 }
 
-class _ResultTextState extends State<ResultText> {
-  String _generatedText = "";
+class _ResultTextState extends ConsumerState<ResultText> {
+  String _generatedText = "please select a template!";
+  
+  void _generateText() {
+    TemplateFormState state = ref.read(templateFormProvider);
+    NullValueException.check(state.activeTemplate, context: "template");
 
-  String _fillTemplate(Template? template) {
-    ArgumentError.checkNotNull(template, "no template chosen!");
+    TemplateBuilder template = state.activeTemplate!;
+    String appliedTemplateText = template.templateText; 
 
-    String result = template!.templateText;
-
-    log(
-      "applying field values to template (${template.name})",
-      name: "INFO",
-      level: 800
-    );
-    
     for (var field in template.fields) {
+      dynamic value = state.fieldValues[field.keyword];
+
       log(
-        "reading Field: ${field.keyword}, value: ${field.value}",
+        "searched ${field.keyword}, value: $value",
         name: "DEBUG (-v)",
-        level: 300
+        level: 300,  
       );
 
-      ArgumentError.checkNotNull(field.value, "Field: ${field.keyword}");
+      NullValueException.check(value, context: "field");
 
-      switch (field) {
-        case LabelledTextField f:
-          result = result.replaceAll('{{${f.keyword}}}', f.value!);
-          break;
-
-        case SelectionField f:
-          String joinedNames = f.value!.join("\n");
-          result = result.replaceAll('{{${field.keyword}}}', joinedNames);
-          break;
+      if (value is List<String>) {
+        value = value.join(",\n");
+      } else if (value !is String) {
+        UnpredictedException(value: value, context: "field");
       }
-    }
 
-    log("applied values to template, result:\n $result", name: "INFO", level: 800);
-    return result;
-  }
-
-  void _generateText() {
-    String templateResult;
-
-    log("user pressed generate text", name: "INFO", level: 800);
-
-    try {
-      templateResult = _fillTemplate(widget.template);
-    } catch (e) {
-      log("null value!", level: 900, error: e, name: "WARN");
-      templateResult = "please submit your fields.";
+      appliedTemplateText = appliedTemplateText
+        .replaceAll("{{${field.keyword}}}", value!);
     }
 
     setState(() {
-      _generatedText = templateResult; 
+      _generatedText = appliedTemplateText;
     });
+
   }
 
   @override
@@ -86,17 +70,36 @@ class _ResultTextState extends State<ResultText> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: Text(
-                  _generatedText.isEmpty
-                      ? "Click 'Generate Text' to fill in values"
-                      : _generatedText,
-                ),
+                child: Text(_generatedText),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: _generateText,
+                    onPressed: () {
+                      log(
+                        "User pressed generate text button",
+                        name: "INFO",
+                        level: 800,
+                      );
+                      try {_generateText();}
+                      catch (e) {
+                        log("Exception caught:", name: "WARN", level: 900, error: e);
+                        if (e is NullValueException) {
+                          switch (e.context) {
+                            case "template":
+                              setState(() =>_generatedText = "please select a template!");
+                              break;
+
+                            case "field":
+                              setState(() =>_generatedText = "please fill in all the fields!");
+                              break;
+                          }
+                        } else if (e is UnpredictedException) {
+                          log(e.message, name:"ERROR", level: 1200);
+                        }
+                      }  
+                    },
                     child: Text("Generate Text"),
                   ),
                   IconButton(

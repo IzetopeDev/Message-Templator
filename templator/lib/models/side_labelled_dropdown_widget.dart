@@ -1,40 +1,29 @@
 
 import 'package:flutter/material.dart';
+import 'package:templator/types/field_config.dart';
 
 class SideLabelledDropdownMenuWidget<T> extends StatelessWidget {
-  const SideLabelledDropdownMenuWidget(
-    this.options,
-    {
-      super.key,
-      required this.sideLabel,
-      this.hintText,
-      this.onSelected,
-      this.defaultOption,
-    }
-  );
+  const SideLabelledDropdownMenuWidget(this.config, {super.key,});
   
-  final List<T> options;
-  final String sideLabel;
-  final String? hintText;
-  final void Function(T? value)? onSelected;
-  final T? defaultOption;
-  
+  final DropdownFieldConfig<T> config;
 
   @override
   Widget build(BuildContext context) {
+    late final options = config.options;
+    
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(sideLabel),
-          DropdownMenu(
+          Text(config.label ?? ""),
+          DropdownMenu<T>(
             width: 200,
-            hintText: hintText,
-            initialSelection: defaultOption,
-            onSelected: onSelected,
+            hintText: config.hintText,
+            initialSelection: config.initialValue,
+            onSelected: config.onSelected,
             dropdownMenuEntries: options.map((opt) {
-              return DropdownMenuEntry(
+              return DropdownMenuEntry<T>(
                 value: opt,
                 label: opt?.name ?? opt.toString(),
               );

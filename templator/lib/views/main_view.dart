@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:templator/classes/field.dart';
-import 'package:templator/classes/template.dart';
+import 'package:templator/types/field_config.dart';
+import 'package:templator/types/template_builder.dart';
 import 'package:templator/pages/apply_template_page.dart';
 
 class MainView extends StatefulWidget {
@@ -15,7 +15,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
 
   final templates = [
-    Template(
+    TemplateBuilder(
       name: "Individual Movement",
       templateText: '''Location: {{location}}, 
 Est Time Out: {{timeOut}}, 
@@ -24,26 +24,26 @@ Est Time In: {{timeIn}},
 Rank/Name: 
 {{names}}''',
       fields: [
-        LabelledTextField(keyword: "location"),
-        LabelledTextField(keyword: "timeOut", label: "Est Time Out"),
-        LabelledTextField(keyword: "timeIn", label: "Est Time In"),
-        SelectionField(
+        LabelledTextFieldConfig(keyword: "location"),
+        LabelledTextFieldConfig(keyword: "timeOut", label: "Est Time Out"),
+        LabelledTextFieldConfig(keyword: "timeIn", label: "Est Time In"),
+        SelectionFieldConfig(
           keyword: "names",
           label: "Rank/Name:",
           options: [
-            // "Alice Johnson",
-            // "Bob Smith",
-            // "Charlie Davis",
-            // "Diana Evans",
-            // "Ethan Harris",
-            // "Fiona Garcia",
-            // "George Brown",
-            // "Hannah Wilson",
+            "Alice Johnson",
+            "Bob Smith",
+            "Charlie Davis",
+            "Diana Evans",
+            "Ethan Harris",
+            "Fiona Garcia",
+            "George Brown",
+            "Hannah Wilson",
           ],
         ),
       ],
     ),
-    Template(
+    TemplateBuilder(
       name: "Vehicle Movement",
       templateText: '''{{VehicleNumber}}
 
@@ -51,12 +51,17 @@ Rank/Name:
 {{Trades}}
 ''',  
       fields: [
-        LabelledTextField(keyword: "VehicleNumber", label: "Vehicle Number"),
-        LabelledTextField(keyword: "Location 1", label: "From:"),
-        LabelledTextField(keyword: "Location 2", label: "To:"),
-        SelectionField(
+        LabelledTextFieldConfig(keyword: "VehicleNumber", label: "Vehicle Number"),
+        LabelledTextFieldConfig(keyword: "Location 1", label: "From:"),
+        LabelledTextFieldConfig(keyword: "Location 2", label: "To:"),
+        SelectionFieldConfig(
           keyword: "Trades", 
           options: [
+            "trade123",
+            "trade152",
+            "trad372e",
+            "trade6278",
+            "trade2",
           ]
         )
       ] 
@@ -103,7 +108,7 @@ class TemplateManager extends StatelessWidget {
     required this.templates,
   });
 
-  final List<Template> templates;
+  final List<TemplateBuilder> templates;
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +116,18 @@ class TemplateManager extends StatelessWidget {
       child: ListView(
         children: templates.map( (template) {
           return Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(template.name),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(template.name),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => print("hello"), 
+                )
+              ],
             )
           );
         }).toList(),

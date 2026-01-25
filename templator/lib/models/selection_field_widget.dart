@@ -1,38 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:templator/types/field_config.dart';
 
 class SelectionFieldWidget extends StatefulWidget {
-  const SelectionFieldWidget(
-    this.listOptions, { //named params
-    super.key,
-    this.onSelected,
-    this.label,
-  });
+  final SelectionFieldConfig config;
 
-  final List<String> listOptions;
-  final void Function(List<String> selectedOptions)? onSelected;
-  final String? label;
+  const SelectionFieldWidget(
+    this.config, {
+    super.key,
+  });
 
   @override
   State<SelectionFieldWidget> createState() => _SelectionFieldWidgetState();
 }
 
 class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
-  List<String> selectedOptions = [];
+  late List<String> selectedOptions;
 
-  void _onNameSelected(bool? value, String option) {
+  @override
+  void initState() {
+    super.initState();
+    selectedOptions = List.from(widget.config.initialValue ?? []);
+  }
 
-
+  void _onNameSelected(bool? isSelected, String option) {
     setState(() {
-      if (value == true) {
+      if (isSelected == true) {
         selectedOptions.add(option);
       } else {
         selectedOptions.remove(option);
       }
     });
 
-    if (widget.onSelected != null) {
-      widget.onSelected!(selectedOptions);
-    }
+    widget.config.onChanged?.call(selectedOptions);
   }
 
   List<String> _sortBySelected(List<String> list) {
@@ -52,23 +51,25 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> sortedList = _sortBySelected(widget.listOptions);
+    List<String> sortedList = _sortBySelected(widget.config.options);
 
     return Column(
       children: [
-        if (widget.label != null) Text(widget.label!),
+        if (widget.config.label != null) 
+          Text(widget.config.label!),
+          
         Column(
           mainAxisSize: MainAxisSize.min,
           children: sortedList
-            .map(
-              (option) => CheckboxListTile(
-                key: ValueKey(option),
-                title: Text(option),
-                value: selectedOptions.contains(option),
-                onChanged: (bool? value) => _onNameSelected(value, option),
-              ),
-            )
-            .toList(),
+              .map(
+                (option) => CheckboxListTile(
+                  key: ValueKey("${widget.config.keyword}_$option"),
+                  title: Text(option),
+                  value: selectedOptions.contains(option),
+                  onChanged: (bool? value) => _onNameSelected(value, option),
+                ),
+              )
+              .toList(),
         ),
       ],
     );

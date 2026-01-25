@@ -1,16 +1,27 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:templator/types/field_config.dart';
 
-class LabelledTextFieldWidget extends StatelessWidget {
-  const LabelledTextFieldWidget(
-    this.optionName, { //named params
-    super.key,
-    this.onChanged,
-    this.isLast = false,
-  });
+class LabelledTextFieldWidget extends StatefulWidget {
+  
+  final LabelledTextFieldConfig config;
 
-  final String optionName;
-  final ValueChanged<String>? onChanged;
-  final bool isLast;
+  const LabelledTextFieldWidget(this.config, {super.key});
+
+  @override
+  State<LabelledTextFieldWidget> createState() => _LabelledTextFieldWidgetState();
+}
+
+class _LabelledTextFieldWidgetState extends State<LabelledTextFieldWidget> {
+  Timer? _timer;
+  
+  void _onChanged(String value, {int time = 500}) {
+    if (_timer?.isActive ?? false) _timer!.cancel();
+
+    _timer = Timer(Duration(milliseconds: time), () {
+      widget.config.onStoppedTyping?.call(value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,18 +30,20 @@ class LabelledTextFieldWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$optionName:"),
+          Text("${widget.config.label ?? widget.config.keyword}:"),
           SizedBox(
             width: 200,
             child: TextField(
-              textInputAction: isLast
+              textInputAction: widget.config.isLast
                   ? TextInputAction.done
                   : TextInputAction.next,
-              onChanged: onChanged,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: optionName,
+                hintText: widget.config.label ?? widget.config.keyword,
               ),
+              onChanged: _onChanged,
+              controller: TextEditingController(text: widget.config.initialValue),
+
             ),
           ),
         ],
@@ -38,3 +51,4 @@ class LabelledTextFieldWidget extends StatelessWidget {
     );
   }
 }
+
