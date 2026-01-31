@@ -18,8 +18,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
   
   @override
   Widget buildEditorField({stateConfig}) {
-    // TODO: implement buildEditorField
-    throw UnimplementedError();
+    return Placeholder();
   }
 
   @override

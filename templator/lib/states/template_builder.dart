@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:templator/providers/active_template_notifier.dart';
 import '../types/field_config.dart';
@@ -24,10 +26,12 @@ class TemplateBuilder {
 
     List<Widget> widgets = [];
     for (FieldConfig fc in formFieldConfigs.values) {
-      
+
       FieldConfig stateConfig = fc.copyWith(
         onValueUpdate: (value) => activeTemplateNotifier?.updateFieldConfig(value),
       );
+
+      log("stateConfig :>> $stateConfig", name: "TemplateBuilder");
 
       widgets.add(
         Card(

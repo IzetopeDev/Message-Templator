@@ -38,7 +38,7 @@ class FieldSelectorConfig extends FieldConfig<FieldConfig> {
       keyword: "FieldSelector",
       hintText: "Select Field",
       label: "Select Field",
-      onValueUpdate: onValueUpdate, //TODO: for other OVUs, need to see how copy with will be used....
+      onValueUpdate: onValueUpdate ?? stateConfig?.onValueUpdate, //TODO: for other OVUs, need to see how copy with will be used....
       dropdownMenuEntries: _options.map((opt) {
         return DropdownMenuEntry(
           value: opt, 
