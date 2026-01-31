@@ -30,9 +30,33 @@ class _TemplateEditorPageState extends ConsumerState<TemplateEditorPage> {
   late final TextEditingController templateTextController;
 
   @override
+  void initState() {
+    TemplateBuilder activeTemplate = ref.read(activeTemplateProvider.select((state) {
+      return state.activeTemplate;
+    }));
+
+    templateNameController = TextEditingController(
+      text: activeTemplate.name 
+    );
+    templateTextController = TextEditingController(
+      text: activeTemplate.templateText 
+    ); 
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    templateNameController.dispose();
+    templateTextController.dispose();
+    _timer?.cancel();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(context) {
     var activeTemplateNotifier = ref.watch(activeTemplateProvider.notifier); 
-    var templateManagerState = ref.watch(templateManagerProvider);
     TemplateBuilder activeTemplate = ref.watch(activeTemplateProvider.select((state) {
       return state.activeTemplate;
     }));
@@ -48,9 +72,7 @@ class _TemplateEditorPageState extends ConsumerState<TemplateEditorPage> {
         child: ListView(
           children: [
             TextField(
-              controller: TextEditingController(
-                text: templateManagerState.builders?[activeTemplate.uid]?.name
-              ),
+              controller: templateNameController,
               onChanged: (value) => _debounce(value, (value) {
                 activeTemplateNotifier.updateTemplateProperties(name: value);
               }),
@@ -61,9 +83,7 @@ class _TemplateEditorPageState extends ConsumerState<TemplateEditorPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: TextField(
-                controller: TextEditingController(
-                  text: templateManagerState.builders?[activeTemplate.uid]?.name
-                ),
+                controller: templateTextController,
                 onChanged: (value) => _debounce(value, (value) {
                   activeTemplateNotifier.updateTemplateProperties(templateText: value);
                 }),
