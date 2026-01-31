@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:templator/pages/template_editor_page.dart';
+import 'package:templator/pages/template_form_page.dart';
 import 'package:templator/pages/template_manager_page.dart';
-import 'package:templator/pages/apply_template_page.dart';
+import 'package:templator/providers/active_template_notifier.dart';
 
-class MainView extends StatefulWidget {
+class MainView extends ConsumerStatefulWidget {
   const MainView({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MainView> createState() => _MainViewState();
+  ConsumerState<MainView> createState() => _MainViewState();
 }
 
-class _MainViewState extends State<MainView> {
+class _MainViewState extends ConsumerState<MainView> {
 
   late final List<Widget> _pages = [
     TemplateManager(),
-    ApplyTemplatePage(),
+    TemplateFormPage(),
   ]; 
 
   int _selectedIndex = 1;
@@ -30,7 +33,7 @@ class _MainViewState extends State<MainView> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (value) { setState(() {_selectedIndex = value;}); },
+        onTap: (value) { setState(() => _selectedIndex = value); },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.all_inbox),
@@ -41,7 +44,18 @@ class _MainViewState extends State<MainView> {
             label: "Apply"
           ),
         ]
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ref.read(activeTemplateProvider.notifier).selectTemplate();
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) {
+              return TemplateEditorPage();
+            },)
+          );
+        }
+      ),
     );
   }
 }

@@ -1,20 +1,43 @@
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:templator/models/field_selector_widget.dart';
+import 'package:templator/providers/active_template_notifier.dart';
+import 'package:templator/providers/template_manager_notifier.dart';
+import 'package:templator/states/template_builder.dart';
 
-class TemplateEditorPage extends ConsumerWidget {
+class TemplateEditorPage extends ConsumerStatefulWidget {
   const TemplateEditorPage({
     super.key,
   });
 
-  void doSomething(dynamic param) {
-    log("doing something");
+  @override
+  ConsumerState<TemplateEditorPage> createState() => _TemplateEditorPageState();
+}
+
+class _TemplateEditorPageState extends ConsumerState<TemplateEditorPage> {
+
+  Timer? _timer;
+  void _debounce(String value, void Function(String value) onValueUpdate){
+    if (_timer?.isActive ?? false) _timer!.cancel();
+
+    _timer = Timer(Duration(milliseconds: 500), () {
+      onValueUpdate(value);
+    });
   }
 
+  late final TextEditingController templateNameController;
+  late final TextEditingController templateTextController;
+
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(context) {
+    var activeTemplateNotifier = ref.watch(activeTemplateProvider.notifier); 
+    var templateManagerState = ref.watch(templateManagerProvider);
+    TemplateBuilder activeTemplate = ref.watch(activeTemplateProvider.select((state) {
+      return state.activeTemplate;
+    }));
+    
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -22,13 +45,15 @@ class TemplateEditorPage extends ConsumerWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: ListView(
           children: [
             TextField(
-              controller: TextEditingController(text:null),
-              onChanged: doSomething,
+              controller: TextEditingController(
+                text: templateManagerState.builders?[activeTemplate.uid]?.name
+              ),
+              onChanged: (value) => _debounce(value, (value) {
+                activeTemplateNotifier.updateTemplateProperties(name: value);
+              }),
               decoration: InputDecoration(
                 hintText: "Your Template Name",
               ),
@@ -36,8 +61,12 @@ class TemplateEditorPage extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: TextField(
-                controller: TextEditingController(text:null),
-                onChanged: doSomething,
+                controller: TextEditingController(
+                  text: templateManagerState.builders?[activeTemplate.uid]?.name
+                ),
+                onChanged: (value) => _debounce(value, (value) {
+                  activeTemplateNotifier.updateTemplateProperties(templateText: value);
+                }),
                 maxLines: 5,
                 decoration: InputDecoration(
                   hintText: "Your Template Text",
@@ -49,10 +78,19 @@ class TemplateEditorPage extends ConsumerWidget {
                 )
               ),
             ),
-            FieldSelectorWidget()
-      
+            Column(
+              children: activeTemplate.buildEditorFields(
+                activeTemplateNotifier: activeTemplateNotifier,
+              )
+            )
+            // TODO: add buttons to write to templatemanager
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          activeTemplateNotifier.createField();
+        }
       ),
     );
   }

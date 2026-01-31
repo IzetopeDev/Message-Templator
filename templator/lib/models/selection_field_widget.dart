@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:templator/types/field_config.dart';
+import 'package:templator/states/field_configs/selection_field_config.dart';
 
 class SelectionFieldWidget extends StatefulWidget {
   final SelectionFieldConfig config;
@@ -14,7 +14,7 @@ class SelectionFieldWidget extends StatefulWidget {
 }
 
 class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
-  late List<String> selectedOptions;
+  late List<String?> selectedOptions;
 
   @override
   void initState() {
@@ -31,10 +31,10 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
       }
     });
 
-    widget.config.onChanged?.call(selectedOptions);
+    widget.config.onValueUpdate?.call(selectedOptions);
   }
 
-  List<String> _sortBySelected(List<String> list) {
+  List<String> _sortBySelected(List<String?> list) {
     List<String> sortedList = List<String>.from(list);
 
     sortedList.sort((a, b) {
@@ -51,7 +51,7 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> sortedList = _sortBySelected(widget.config.options);
+    List<String?> sortedList = _sortBySelected(widget.config.options);
 
     return Column(
       children: [
@@ -60,11 +60,12 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
           
         Column(
           mainAxisSize: MainAxisSize.min,
-          children: sortedList
-              .map(
+          children: sortedList.isEmpty 
+            ? [Text("no options!")]
+            : sortedList.map(
                 (option) => CheckboxListTile(
-                  key: ValueKey("${widget.config.keyword}_$option"),
-                  title: Text(option),
+                  key: ValueKey("${widget.config.uid}_$option"),
+                  title: Text(option!),
                   value: selectedOptions.contains(option),
                   onChanged: (bool? value) => _onNameSelected(value, option),
                 ),

@@ -1,4 +1,4 @@
-import 'package:templator/types/template_builder.dart';
+import 'package:templator/states/template_builder.dart';
 
 class TemplateManagerState {
   final Map<String, TemplateBuilder>? builders;

@@ -1,142 +1,41 @@
-import 'dart:developer';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:templator/models/labelled_text_field_widget.dart';
-import 'package:templator/models/selection_field_widget.dart';
-import 'package:templator/models/dropdown_field_widget.dart';
 
-enum FieldType {
-  labelledTextField("Text Field"),
-  selectionField("Selection Field"),
-  dropdownField("Dropdown Field");
+abstract class FieldConfig<T> extends Equatable {
   
-  final String name;
+  final String uid;
+  final String parentUid;
 
-  const FieldType(this.name);
-}
-
-abstract class FieldConfig<T> {
-  final String keyword;
+  final String? keyword;
   final String? label;
-  T? initialValue;
 
-  FieldConfig({required this.keyword, this.label, this.initialValue}) {
-    log(
-      "new $runtimeType ($keyword)",
-      name: "DEBUG",
-      level: 500,
-    );
+  final void Function(T? value)? onValueUpdate;
+  final T? initialValue;
+  
 
-    final rawContent = "props($keyword)\n$props";
+  const FieldConfig({
+    required this.uid,
+    required this.parentUid,
+    required this.keyword,
+    this.label,
+    this.onValueUpdate,
+    this.initialValue,
+  });
 
-    // ignore: prefer_interpolation_to_compose_strings
-    final taggedContent = rawContent.replaceAll('\n', ' (-v)\n') + ' (-v)';
+  Widget buildFormField({FieldConfig<T>? stateConfig});
 
-    log(
-      taggedContent,
-      name: "DEBUG", // The tag is now inside the message lines
-      level: 300,
-    );
-  }
+  Widget buildEditorField({FieldConfig<T>? stateConfig});
 
-  String get props => "keyword: $keyword,\nlabel: $label,\ninitialValue: $initialValue";
-
-  Widget buildWidget(
-    String parentName, {
-    void Function(T? value)? callback,
+  FieldConfig<T> copyWith({
+    String? uid,
+    String? parentUid,
+    String? keyword,
+    String? label,
+    void Function(T? value)? onValueUpdate,
     T? initialValue,
   });
-}
-
-class LabelledTextFieldConfig extends FieldConfig<String> {
-  
-  final bool isLast;
-  void Function(String value)? onStoppedTyping;
-
-  LabelledTextFieldConfig({
-    required super.keyword, 
-    super.label, 
-    super.initialValue,
-    this.isLast = false,
-    this.onStoppedTyping,
-  });
 
   @override
-  String get props {
-    return "${super.props}\nisLast: $isLast";
-  }
-
-  @override
-  Widget buildWidget(parentName, {callback, initialValue}) {
-
-    if (callback != null) onStoppedTyping = callback;
-    if (initialValue != null) super.initialValue = initialValue;
-
-    return LabelledTextFieldWidget(this, key: ValueKey("$parentName:$keyword"),);
-  }
-}
-
-class SelectionFieldConfig extends FieldConfig<List<String>> {
-  
-  final List<String> options;
-  void Function(List<String> selectedOptions)? onChanged;
-
-  SelectionFieldConfig({
-    required super.keyword, 
-    required this.options, 
-    super.initialValue,
-    super.label, 
-    this.onChanged,
-  });
-
-
-  @override
-  String get props {
-    return "${super.props}\noptions: $options";
-  }
-
-
-  @override
-  Widget buildWidget(parentName, {callback, initialValue}) {
-
-    if (callback != null) onChanged = callback;
-    if (initialValue != null) super.initialValue = initialValue;
-
-    return SelectionFieldWidget(this, key: ValueKey("$parentName:{{$keyword}}"),);
-  }
-
-}
-
-class DropdownFieldConfig<T> extends FieldConfig<T> {
-
-  final List<T> options;
-  final String? hintText;
-  void Function(T? value)? onSelected;
-
-  DropdownFieldConfig({
-    required super.keyword,
-    required this.options,
-    super.initialValue,
-    super.label,
-    this.hintText,
-    this.onSelected,
-  });
-  
-  @override
-  String get props {
-    // ignore: prefer_adjacent_string_concatenation
-    return "${super.props},\nhintText: $hintText,\noptions: $options";
-  }
-
-  @override
-  Widget buildWidget(parentName, {callback, initialValue}) {
-
-    if (callback != null) onSelected = callback;
-    if (initialValue != null) super.initialValue = initialValue;
-
-    return DropdownFieldWidget<T>(
-      this, 
-      key: ValueKey("$parentName:{{$keyword}}"),
-    );
-  }
-
+  // TODO: implement props
+  List<Object?> get props => [uid, parentUid, keyword, label];
 }

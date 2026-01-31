@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:templator/pages/template_editor_page.dart';
 import 'package:templator/providers/template_manager_notifier.dart';
 import 'package:templator/states/template_manager_state.dart';
-import 'package:templator/types/template_builder.dart';
+import 'package:templator/states/template_builder.dart';
 
 class TemplateManager extends ConsumerWidget {
 
@@ -14,7 +14,6 @@ class TemplateManager extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     TemplateManagerState state = ref.watch(templateManagerProvider);
-    TemplateManagerNotifier notifier = ref.watch(templateManagerProvider.notifier);
     
     Map<String, TemplateBuilder>? templateBuilders = state.builders;
 
@@ -27,7 +26,7 @@ class TemplateManager extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(template.name),
+                  child: Text(template.name ?? "unnamedTemplate"),
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),

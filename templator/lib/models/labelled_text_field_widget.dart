@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:templator/types/field_config.dart';
+import 'package:templator/states/field_configs/labelled_text_field_config.dart';
 
 class LabelledTextFieldWidget extends StatefulWidget {
   
@@ -19,7 +19,7 @@ class _LabelledTextFieldWidgetState extends State<LabelledTextFieldWidget> {
     if (_timer?.isActive ?? false) _timer!.cancel();
 
     _timer = Timer(Duration(milliseconds: time), () {
-      widget.config.onStoppedTyping?.call(value);
+      widget.config.onValueUpdate?.call(value);
     });
   }
 
@@ -30,7 +30,7 @@ class _LabelledTextFieldWidgetState extends State<LabelledTextFieldWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${widget.config.label ?? widget.config.keyword}:"),
+          Text("${widget.config.label ?? widget.config.uid}:"),
           SizedBox(
             width: 200,
             child: TextField(
@@ -39,7 +39,7 @@ class _LabelledTextFieldWidgetState extends State<LabelledTextFieldWidget> {
                   : TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: widget.config.label ?? widget.config.keyword,
+                hintText: widget.config.label ?? widget.config.uid,
               ),
               onChanged: _onChanged,
               controller: TextEditingController(text: widget.config.initialValue),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:templator/models/single_instance/result_text_section.dart';
 import 'package:templator/models/single_instance/text_template_card.dart';
 
-class ApplyTemplatePage extends StatelessWidget {
-  const ApplyTemplatePage({
+class TemplateFormPage extends StatelessWidget {
+  const TemplateFormPage({
     super.key,
   });
 
@@ -13,7 +13,7 @@ class ApplyTemplatePage extends StatelessWidget {
       child: ListView(
         children: [ 
           TextTemplateCard(),
-          ResultText(),
+          //ResultText(),
           SizedBox(height: 200),
         ],
       ),

@@ -2,7 +2,7 @@ class NullValueException implements Exception {
   final String? context;
   final String? customMessage;
 
-  NullValueException({
+  const NullValueException({
     this.context,
     this.customMessage,
   });
@@ -33,7 +33,7 @@ class UnpredictedException implements Exception {
   final String? customMessage;
   final StackTrace? stack;
 
-  UnpredictedException({
+  const UnpredictedException({
     this.value,
     this.context,
     this.customMessage,
