@@ -53,7 +53,7 @@ class FieldSelectorConfig extends FieldConfig<FieldConfig> {
   @override
   Widget buildFormField({stateConfig}) {
     // TODO: Return the widget that lets you select a field type
-    throw UnimplementedError();
+    return Placeholder();
   }
 
   @override
@@ -70,7 +70,7 @@ class FieldSelectorConfig extends FieldConfig<FieldConfig> {
     String? parentUid,
     String? keyword,
     String? label,
-    void Function(FieldConfig? value)? onValueUpdate,
+    void Function(dynamic value)? onValueUpdate,
     FieldConfig? initialValue,
   }) {
     return FieldSelectorConfig(

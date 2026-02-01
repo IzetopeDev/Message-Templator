@@ -28,7 +28,8 @@ class TemplateBuilder {
     for (FieldConfig fc in formFieldConfigs.values) {
 
       FieldConfig stateConfig = fc.copyWith(
-        onValueUpdate: (value) => activeTemplateNotifier?.updateFieldConfig(value),
+        onValueUpdate: (fieldConfig) => 
+          activeTemplateNotifier?.updateFieldConfig(fieldConfig),
       );
 
       log("stateConfig :>> $stateConfig", name: "TemplateBuilder");
@@ -58,9 +59,7 @@ class TemplateBuilder {
       );
 
       widgets.add(
-        Card(
-          child: fc.buildEditorField(stateConfig: stateConfig)
-        )
+        fc.buildFormField(stateConfig: stateConfig)
       );
     }
 

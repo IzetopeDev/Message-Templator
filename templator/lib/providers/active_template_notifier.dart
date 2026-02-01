@@ -14,45 +14,58 @@ class ActiveTemplateNotifier extends Notifier<ActiveTemplateState> {
 
   @override
   ActiveTemplateState build() {
-    final initialState = ActiveTemplateState(activeTemplate: TemplateBuilder(uid: 'default'));
-    
-    log('Initialized ActiveTemplateState', name: _logName);
-    
-    return initialState;
+    log('🏗️ INITIALIZING state', name: _logName);
+    return ActiveTemplateState(
+      activeTemplate: TemplateBuilder(
+        uid: 'default',
+        formFieldConfigs: { 'default' : FieldSelectorConfig(
+          parentUid: 'default',
+          uid: 'default'
+        )
+      }
+      )
+    );
   }
 
   void selectTemplate({String? uid}) {
-    log('Selecting template with UID: $uid', name: _logName);
+    final oldUid = state.activeTemplate.uid;
+    
+    TemplateBuilder? template = ref.read(templateManagerProvider).builders?[uid];
 
-    TemplateBuilder template = 
-      ref.read(templateManagerProvider).builders?[uid]
-      ?? TemplateBuilder(uid: Utils.generateUid(10));
+    if (template == null) {
+      String templateUid = Utils.generateUid(10);
+      String fieldUid = Utils.generateUid(10); 
 
-    if (ref.read(templateManagerProvider).builders?[uid] == null) {
-      log('Template not found, created new template: ${template.uid}', name: _logName);
+      template = TemplateBuilder(
+        uid: templateUid,
+        formFieldConfigs: {fieldUid : FieldSelectorConfig(
+          uid: fieldUid, 
+          parentUid: templateUid,
+        ),}
+      );
     }
 
     state = ActiveTemplateState(activeTemplate: template);
     
-    log('State updated: Active template is now ${state.activeTemplate.name} (${state.activeTemplate.uid})', name: _logName);
+    log('🔄 TEMPLATE SWITCH: [$oldUid] -> [${state.activeTemplate.uid}]', name: _logName);
   }
 
-  void updateTemplateProperties({
-    String? name,
-    String? templateText,
-  }) {
-    // Log exactly what is being attempted
-    log('User input properties: Name: $name, Text: ${templateText != null ? "[REDACTED LENGTH: ${templateText.length}]" : "Unchanged"}', name: _logName);
- 
-    var newTemplate = state.activeTemplate.copyWith(
-      name: name ?? state.activeTemplate.name,
-      templateText: templateText ?? state.activeTemplate.templateText,
-    ); 
+  void updateTemplateProperties({String? name, String? templateText}) {
+    final template = state.activeTemplate;
 
-    state = state.copyWith(activeTemplate: newTemplate);
-    //TODO: update parentName for fields
+    state = state.copyWith(
+      activeTemplate: template.copyWith(
+        name: name ?? template.name,
+        templateText: templateText ?? template.templateText,
+      )
+    );
+
+    log('📝 PROP UPDATE: '
+        'Name: "${template.name}" -> "${state.activeTemplate.name}", '
+        'Text changed: ${templateText != null}', 
+        name: _logName);
   }
-  
+
   void createField() {
     var newUid = Utils.generateUid(15);
     log('Creating new field with UID: $newUid', name: _logName);
@@ -75,28 +88,42 @@ class ActiveTemplateNotifier extends Notifier<ActiveTemplateState> {
   }
 
   void updateFieldConfig(FieldConfig newConfig) {
-    log('Updating config for field: ${newConfig.uid} (Type: ${newConfig.runtimeType})', name: _logName);
-
-    var newConfigsMap = {
-      ...state.activeTemplate.formFieldConfigs,
-      newConfig.uid : newConfig 
-    };
+    final oldConfig = state.activeTemplate.formFieldConfigs[newConfig.uid];
 
     state = state.copyWith(
       activeTemplate: state.activeTemplate.copyWith(
-        formFieldConfigs: newConfigsMap
+        formFieldConfigs: {
+          ...state.activeTemplate.formFieldConfigs,
+          newConfig.uid: newConfig
+        }
       )
     );
+
+    log('⚙️ FIELD CONFIG CHANGED: '
+        'UID: ${newConfig.uid} | '
+        'Type: ${newConfig.runtimeType} | '
+        'Old: ${oldConfig.toString()} | '
+        'New: ${newConfig.toString()}', 
+        name: _logName
+      );
   }
 
   void updateFormResponse({required String uid, dynamic value}) {
-    log('Updating form response - Field: $uid, Value: $value', name: _logName);
-
-    var newFormResponses = {...state.formResponses, uid: value};
+    final oldValue = state.formResponses[uid];
     
+    if (oldValue == value) {
+      log('ℹ️ RESPONSE SKIPPED: Field $uid already holds value: $value', name: _logName);
+      return;
+    }
+
     state = state.copyWith(
-      formResponses: newFormResponses,
+      formResponses: {...state.formResponses, uid: value},
     );
+
+    log('📥 RESPONSE UPDATE: '
+        'Field: $uid | '
+        'Value: [$oldValue] -> [$value]', 
+        name: _logName);
   }
 } 
 

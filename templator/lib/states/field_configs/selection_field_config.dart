@@ -44,7 +44,7 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
     String? parentUid,
     String? keyword,
     String? label,
-    void Function(List<String?>? value)? onValueUpdate,
+    void Function(dynamic value)? onValueUpdate,
     List<String?>? initialValue,
     List<String>? options,
 

@@ -46,7 +46,7 @@ class DropdownFieldConfig<T> extends FieldConfig<T> {
     String? parentUid,
     String? keyword,
     String? label,
-    void Function(T? value)? onValueUpdate,
+    void Function(dynamic value)? onValueUpdate,
     T? initialValue,
     List<DropdownMenuEntry<T>>? dropdownMenuEntries,
     String? hintText,

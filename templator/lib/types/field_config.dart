@@ -9,7 +9,7 @@ abstract class FieldConfig<T> extends Equatable {
   final String? keyword;
   final String? label;
 
-  final void Function(T? value)? onValueUpdate;
+  final void Function(dynamic value)? onValueUpdate;
   final T? initialValue;
   
 
@@ -31,7 +31,7 @@ abstract class FieldConfig<T> extends Equatable {
     String? parentUid,
     String? keyword,
     String? label,
-    void Function(T? value)? onValueUpdate,
+    void Function(dynamic value)? onValueUpdate,
     T? initialValue,
   });
 

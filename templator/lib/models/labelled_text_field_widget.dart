@@ -30,16 +30,22 @@ class _LabelledTextFieldWidgetState extends State<LabelledTextFieldWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${widget.config.label ?? widget.config.uid}:"),
+          Text("${
+            widget.config.label 
+            ?? widget.config.keyword 
+            ?? widget.config.uid
+          }:"),
           SizedBox(
             width: 200,
             child: TextField(
               textInputAction: widget.config.isLast
-                  ? TextInputAction.done
-                  : TextInputAction.next,
+                ? TextInputAction.done
+                : TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: widget.config.label ?? widget.config.uid,
+                hintText: widget.config.label 
+                  ?? widget.config.keyword 
+                  ?? widget.config.uid,
               ),
               onChanged: _onChanged,
               controller: TextEditingController(text: widget.config.initialValue),
