@@ -52,7 +52,7 @@ class FieldSelectorConfig extends FieldConfig<FieldConfig> {
 
   @override
   Widget buildFormField({stateConfig}) {
-    // TODO: Return the widget that lets you select a field type
+    // This should be dead code.
     return Placeholder();
   }
 

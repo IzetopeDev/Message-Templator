@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:templator/providers/active_template_notifier.dart';
+import 'package:templator/states/field_configs/field_selector_config.dart';
+import 'package:templator/states/field_configs/selection_field_config.dart';
 import '../types/field_config.dart';
 
 class TemplateBuilder {
@@ -58,6 +60,7 @@ class TemplateBuilder {
         ),
       );
 
+      if (fc.runtimeType == FieldSelectorConfig) continue; 
       widgets.add(
         fc.buildFormField(stateConfig: stateConfig)
       );

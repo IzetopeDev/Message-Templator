@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:templator/models/labelled_text_field_widget.dart';
 import 'package:templator/states/field_configs/selection_field_config.dart';
+import 'package:templator/types/exceptions.dart';
 import 'package:templator/types/field_config.dart';
 
 class LabelledTextFieldConfig extends FieldConfig<String> {
@@ -83,6 +84,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
           parentUid: parentUid,
           label: "last text field?",
           options: ["yes", "no"],
+          initialValue: ["no"],
           onValueUpdate: (value) { 
             bool actualVal = value == "yes" ? true : false;
 
@@ -97,9 +99,19 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
     );
   }
 
+
   @override
   Widget buildFormField({stateConfig}) {
-    return LabelledTextFieldWidget(this);
+    if (
+      stateConfig.runtimeType != LabelledTextFieldConfig 
+      && stateConfig != null
+    ) {
+      throw UnpredictedException(context: "building form field for $this");
+    }
+
+    return LabelledTextFieldWidget(
+      stateConfig as LabelledTextFieldConfig? 
+      ?? this);
   }
 
   @override

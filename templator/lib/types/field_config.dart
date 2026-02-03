@@ -37,5 +37,5 @@ abstract class FieldConfig<T> extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => [uid, parentUid, keyword, label];
+  List<Object?> get props => [uid, parentUid, keyword, label, initialValue];
 }

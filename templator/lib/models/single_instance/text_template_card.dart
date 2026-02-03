@@ -56,7 +56,7 @@ class TextTemplateCard extends ConsumerWidget {
                   );
                 })
                 .toList() 
-                ?? [DropdownMenuEntry(value: null, label: "no templates!")], 
+                ?? [DropdownMenuEntry(value: null, label: "no templates!")], //dead code somehow...
                 uid: "FormTemplateSelector",
                 parentUid: "TextTemplateCard",
                 label: "Template:",
