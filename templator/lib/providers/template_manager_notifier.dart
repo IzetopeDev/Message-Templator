@@ -12,8 +12,11 @@ class TemplateManagerNotifier extends Notifier<TemplateManagerState>{
     );
   }
 
-  void addBuilder(TemplateBuilder builder) {
-    state = state.copyWith({...state.builders ?? {}, builder.uid : builder});
+  void updateBuilder(TemplateBuilder builder) {
+    var newBuilders = {...state.builders ?? {}};
+    newBuilders[builder.uid] = builder;
+
+    state = state.copyWith(newBuilders);
   }
 
   void removeBuilder(String builderName) {

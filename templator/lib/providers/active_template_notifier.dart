@@ -21,8 +21,7 @@ class ActiveTemplateNotifier extends Notifier<ActiveTemplateState> {
         formFieldConfigs: { 'default' : FieldSelectorConfig(
           parentUid: 'default',
           uid: 'default'
-        )
-      }
+        )}
       )
     );
   }

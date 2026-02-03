@@ -47,7 +47,11 @@ class _MainViewState extends ConsumerState<MainView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ref.read(activeTemplateProvider.notifier).selectTemplate();
+          ref.read(activeTemplateProvider.notifier).selectTemplate(
+            uid: ref.read(activeTemplateProvider.select((state) {
+              return state.activeTemplate.uid;
+            }))
+          );
           Navigator.push(
             context, 
             MaterialPageRoute(builder: (context) {
