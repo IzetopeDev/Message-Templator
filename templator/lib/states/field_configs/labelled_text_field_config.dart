@@ -18,7 +18,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
     this.isLast = false,
   });
   
-  void _toFieldConfig({
+  void _toNewConfig({
     required String keyword, 
     required dynamic value,
     required void Function(dynamic value)? onValueUpdate,
@@ -45,7 +45,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
           keyword: "keyword",
           initialValue: keyword,
           onValueUpdate: (value) { 
-            _toFieldConfig(
+            _toNewConfig(
               keyword: "keyword",
               value: value,
               onValueUpdate: stateConfig?.onValueUpdate,
@@ -58,7 +58,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
           keyword: "label",
           initialValue: label,
           onValueUpdate: (value) { 
-            _toFieldConfig(
+            _toNewConfig(
               keyword: "label",
               value: value,
               onValueUpdate: stateConfig?.onValueUpdate,
@@ -72,7 +72,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
           label: "inital value",
           initialValue: initialValue,
           onValueUpdate: (value) { 
-            _toFieldConfig(
+            _toNewConfig(
               keyword: "initialValue",
               value: value,
               onValueUpdate: stateConfig?.onValueUpdate,
@@ -88,7 +88,7 @@ class LabelledTextFieldConfig extends FieldConfig<String> {
           onValueUpdate: (value) { 
             bool actualVal = value == "yes" ? true : false;
 
-            _toFieldConfig(
+            _toNewConfig(
               keyword: "isLast",
               value: actualVal,
               onValueUpdate: stateConfig?.onValueUpdate,
