@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:templator/models/option_editor_field.dart';
 import 'package:templator/models/selection_field_widget.dart';
 import 'package:templator/states/field_configs/dropdown_field_config.dart';
 import 'package:templator/states/field_configs/labelled_text_field_config.dart';
@@ -15,7 +16,7 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
     super.label,
     super.onValueUpdate,
     super.initialValue,
-    this.options = const [],
+    this.options = const [null],
   });
 
   void _toNewConfig({
@@ -27,7 +28,7 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
     var newFieldConfig = copyWith(
       keyword: keywordMap["keyword"] ?? this.keyword,
       label: keywordMap["label"] ?? label,
-      initialValue: keywordMap["initialValue"] ?? initialValue,
+      options: keywordMap["options"] ?? options,
     );
 
     onValueUpdate?.call(newFieldConfig);
@@ -64,16 +65,16 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
             );
           },
         ).buildFormField(),
-        OptionEditorField(),
-        DropdownFieldConfig(
-          uid: uid, 
-          parentUid: parentUid,
-          keyword: "initalValue",
-          hintText: "Initial Value",
-          label: "Initial Value",
-          onValueUpdate: (value) => throw UnimplementedError(),
-          //dropdownMenuEntries: ,
-        ).buildFormField(),
+        OptionEditorField(
+          options: options,
+          onChanged: (value) {
+            _toNewConfig(
+              keyword: "options",
+              value: value,
+              onValueUpdate: stateConfig?.onValueUpdate,
+            );
+          },
+        ),
       ],
     );
   }
@@ -102,7 +103,7 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
     String? label,
     void Function(dynamic value)? onValueUpdate,
     List<String?>? initialValue,
-    List<String>? options,
+    List<String?>? options,
 
   }) {
     return SelectionFieldConfig(
@@ -117,57 +118,3 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
   }
 }
 
-class OptionEditorField extends StatelessWidget {
-  const OptionEditorField({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          alignment: Alignment.center,
-          child: Text("Options:"),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 1
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(8))
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SizedBox(
-                    width: 200,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: UnderlineInputBorder(borderSide: BorderSide(width: 1)) 
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed:() => throw UnimplementedError(), 
-                  icon: Icon(Icons.delete),
-                ),
-              ],
-            ),
-          ),
-        ),
-        IconButton(
-          padding: const EdgeInsets.all(8.0),
-          //TODO: style such that the button spans the whole width. 
-          icon: Icon(Icons.add),
-          onPressed: () => throw UnimplementedError(), 
-        ),
-      ],
-    );
-  }
-}

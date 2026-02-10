@@ -35,7 +35,7 @@ class _SelectionFieldWidgetState extends State<SelectionFieldWidget> {
   }
 
   List<String> _sortBySelected(List<String?> list) {
-    List<String> sortedList = List<String>.from(list);
+    List<String> sortedList = list.whereType<String>().toList();
 
     sortedList.sort((a, b) {
       bool isASelected = selectedOptions.contains(a);
