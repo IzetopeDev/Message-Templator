@@ -13,7 +13,7 @@ class TemplateFormPage extends StatelessWidget {
       child: ListView(
         children: [ 
           TextTemplateCard(),
-          //ResultText(),
+          ResultText(),
           SizedBox(height: 200),
         ],
       ),

@@ -107,20 +107,15 @@ class ActiveTemplateNotifier extends Notifier<ActiveTemplateState> {
       );
   }
 
-  void updateFormResponse({required String uid, dynamic value}) {
-    final oldValue = state.formResponses[uid];
-    
-    if (oldValue == value) {
-      log('ℹ️ RESPONSE SKIPPED: Field $uid already holds value: $value', name: _logName);
-      return;
-    }
+  void updateFormResponse({String? keyword, dynamic value}) {
+    final oldValue = state.formResponses[keyword];
 
     state = state.copyWith(
-      formResponses: {...state.formResponses, uid: value},
+      formResponses: {...state.formResponses, keyword.toString(): value},
     );
 
     log('📥 RESPONSE UPDATE: '
-        'Field: $uid | '
+        'Field: $keyword | '
         'Value: [$oldValue] -> [$value]', 
         name: _logName);
   }

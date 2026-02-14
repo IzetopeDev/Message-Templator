@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:templator/models/option_editor_field.dart';
 import 'package:templator/models/selection_field_widget.dart';
-import 'package:templator/states/field_configs/dropdown_field_config.dart';
 import 'package:templator/states/field_configs/labelled_text_field_config.dart';
+import 'package:templator/types/exceptions.dart';
 import 'package:templator/types/field_config.dart';
 
 class SelectionFieldConfig extends FieldConfig<List<String?>> {
@@ -81,8 +81,16 @@ class SelectionFieldConfig extends FieldConfig<List<String?>> {
 
   @override
   Widget buildFormField({stateConfig}) {
+    if (
+      stateConfig.runtimeType != SelectionFieldConfig
+      && stateConfig != null
+    ) {
+      throw UnpredictedException(context: "building form field for $this");
+    }
+
     return SelectionFieldWidget(
-      this,
+      stateConfig as SelectionFieldConfig?
+      ?? this
     );
   }
 

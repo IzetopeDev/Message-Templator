@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:templator/providers/active_template_notifier.dart';
 import 'package:templator/states/field_configs/field_selector_config.dart';
-import 'package:templator/states/field_configs/selection_field_config.dart';
 import '../types/field_config.dart';
 
 class TemplateBuilder {
@@ -38,7 +37,8 @@ class TemplateBuilder {
 
       widgets.add(
         Card(
-          child: fc.buildEditorField(stateConfig: stateConfig)
+          key: ValueKey('editor_${fc.uid}'),
+          child: fc.buildEditorField(stateConfig: stateConfig),
         )
       );
     }
@@ -53,21 +53,26 @@ class TemplateBuilder {
 
     List<Widget> widgets = [];
     for (FieldConfig fc in formFieldConfigs.values) {
+      
+
       FieldConfig stateConfig = fc.copyWith(
         onValueUpdate: (value) => activeTemplateNotifier?.updateFormResponse(
-          uid: fc.uid, 
+          keyword: fc.keyword, 
           value: value,
         ),
       );
 
       if (fc.runtimeType == FieldSelectorConfig) continue; 
       widgets.add(
-        fc.buildFormField(stateConfig: stateConfig)
+        KeyedSubtree(
+          key: ValueKey('form_${fc.uid}'),
+          child: fc.buildFormField(stateConfig: stateConfig),
+        )
       );
     }
 
     // TODO: replace Placeholder for no fields
-    if (widgets.isEmpty) widgets= [Text("Select your template to generate fields!")]; 
+    if (widgets.isEmpty) widgets= [const Text("Select your template to generate fields!", key: ValueKey('empty_fields_msg'))]; 
     return widgets;
   }
 

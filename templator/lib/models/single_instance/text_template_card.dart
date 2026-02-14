@@ -48,25 +48,28 @@ class TextTemplateCard extends ConsumerWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              DropdownFieldConfig<TemplateBuilder?>(
-                dropdownMenuEntries: builders?.map((b) {
-                  return DropdownMenuEntry(
-                    value: b, 
-                    label: b.name ?? "unnamed template"
-                  );
-                })
-                .toList() 
-                ?? [DropdownMenuEntry(value: null, label: "no templates!")], //dead code somehow...
-                uid: "FormTemplateSelector",
-                parentUid: "TextTemplateCard",
-                label: "Template:",
-                hintText: "Your Template",
-                initialValue: activeTemplate,
-                onValueUpdate: (value) => _onTemplateSelected(value, activeTemplateNotifier),
-              )
-              .buildFormField(),
+              KeyedSubtree(
+                key: const ValueKey("MainTemplateSelector"),
+                child: DropdownFieldConfig<TemplateBuilder?>(
+                  dropdownMenuEntries: builders?.map((b) {
+                    return DropdownMenuEntry(
+                      value: b, 
+                      label: b.name ?? "unnamed template"
+                    );
+                  })
+                  .toList() 
+                  ?? [DropdownMenuEntry(value: null, label: "no templates!")], //dead code somehow...
+                  uid: "FormTemplateSelector",
+                  parentUid: "TextTemplateCard",
+                  label: "Template:",
+                  hintText: "Your Template",
+                  initialValue: activeTemplate,
+                  onValueUpdate: (value) => _onTemplateSelected(value, activeTemplateNotifier),
+                )
+                .buildFormField(),
+              ),
               Column(
-                children: activeTemplate.buildFormFields(),
+                children: activeTemplate.buildFormFields(activeTemplateNotifier: activeTemplateNotifier),
               ),
             ],
           ),

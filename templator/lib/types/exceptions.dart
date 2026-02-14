@@ -44,7 +44,7 @@ class UnpredictedException implements Exception {
     return customMessage 
       // ignore: prefer_adjacent_string_concatenation
       ?? "Unexpected value (${context ?? "unknown"})}\n" +
-        "value: $value" +
+        "value: ${value.toString()}" +
         "stack trace: ${stack ?? StackTrace.current}"; 
   }
 

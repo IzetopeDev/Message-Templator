@@ -4,7 +4,7 @@ class ActiveTemplateState {
   final TemplateBuilder activeTemplate;
   final bool showOptional;
 
-  //String is the fieldID.
+  //String is the keyword.
   final Map<String, dynamic> formResponses;
   
   const ActiveTemplateState({
